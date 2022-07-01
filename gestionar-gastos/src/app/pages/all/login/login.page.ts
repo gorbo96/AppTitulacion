@@ -172,7 +172,7 @@ export class LoginPage implements OnInit {
               
             }
             
-          }, 2000);
+          }, 4000);
 
         } catch (error) {
           this.alert = "Ocurrió un error con el inicio de sesión"
