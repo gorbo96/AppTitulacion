@@ -24,7 +24,6 @@
     "@angular/router": "~13.2.2",
     "@awesome-cordova-plugins/google-plus": "^5.43.0",
     "@awesome-cordova-plugins/local-notifications": "^5.41.0",
-    "@capacitor-firebase/authentication": "^0.5.0",
     "@capacitor/android": "3.6.0",
     "@capacitor/app": "1.1.1",
     "@capacitor/core": "^3.5.1",
