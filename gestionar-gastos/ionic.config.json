@@ -1,7 +1,12 @@
 {
   "name": "GestionarGastos",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {"plugins": {
+      "FirebaseAuthentication": {
+        "skipNativeAuth": false,
+        "providers": ["apple.com", "google.com"]
+      }
+    }}
   },
   "type": "angular"
 }
