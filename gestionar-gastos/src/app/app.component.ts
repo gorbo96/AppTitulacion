@@ -13,8 +13,6 @@ export class AppComponent implements OnInit {
   private email: any
   private sessionUser : any
 
-  public appPages: any
-
   private appPagesAdmin = [
     { title: 'Inicio', url: '/home', icon: 'home-outline' },
     { title: 'Perfil', url: '/profile', icon: 'build-outline' },
@@ -50,19 +48,14 @@ export class AppComponent implements OnInit {
         await this.sessionUser.pipe(take(1)).subscribe(res=> {
           console.log('HERE '+res[0].email)
           this.name = res[0].displayName
+          this.auth.sideMenu = res[0].role          
 
-          if(res[0].role === 'A') {
-            this.appPages = this.appPagesAdmin
-          } else {
-            this.appPages = this.appPagesUser
-          }
-
-          this.auth.sideMenu = true
+          //this.auth.sideMenu = true
 
         }) 
       } catch (error) {
         console.log('SIDEMENU: '+error);
-        this.auth.sideMenu = false
+        //this.auth.sideMenu = false
 
       }
 

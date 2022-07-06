@@ -22,7 +22,7 @@ export class AuthenticationService {
   public currentUser: any
   private credential: any
 
-  public sideMenu: boolean
+  public sideMenu = 'D'
 
   constructor( private afAuth: AngularFireAuth,
                private afs: AngularFirestore,
@@ -33,16 +33,16 @@ export class AuthenticationService {
                 afAuth.authState.
                 subscribe(user => (this.estaLogeado = user));
 
-    this.user = this.afAuth.authState.pipe(
-      switchMap(user => {
-        if (user){
-          return this.afs.doc<any>(`users/${user.uid}`).valueChanges();
-        } else {
-          return of(null);
-        }
-      })
-    );
-  }
+                this.user = this.afAuth.authState.pipe(
+                  switchMap(user => {
+                    if (user){
+                      return this.afs.doc<any>(`users/${user.uid}`).valueChanges();
+                    } else {
+                      return of(null);
+                    }
+                  })
+                );
+              }
 
   //iniciar sesion
   async onLogin (user: User) {
@@ -50,6 +50,7 @@ export class AuthenticationService {
       // this.afs.collection("users", ref => ref.where("email", "==", user.email).where("password", "==", user.password)).doc().valueChanges();
       this.afAuth.signInWithEmailAndPassword( user.email, user.password).then((userCredential) => {
         this.currentUser = userCredential.user
+        this.sideMenu = this.currentUser._delegate.role
       }).catch(err => {
         console.log("NOT FOUND")
       })
@@ -172,6 +173,7 @@ export class AuthenticationService {
       await firebase.default.auth().signInWithCredential(googleCredential).then(async (userCredential) => {
         this.currentUser = await userCredential.user
         this.credential = await userCredential
+        this.sideMenu = this.currentUser._delegate.role
       })
       //console.log(JSON.stringify(firebaseUser.user));
       //await this.updateUserData(this.currentUser, 'google');
@@ -188,6 +190,7 @@ export class AuthenticationService {
       await this.afAuth.signInWithPopup(provider).then(async (userCredential) => {
         this.currentUser = await userCredential.user
         this.credential = await userCredential
+        this.sideMenu = this.currentUser._delegate.role
       })
       //console.log(JSON.stringify(this.currentUser));
       //await this.updateUserData(this.credential, 'google')

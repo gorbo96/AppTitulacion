@@ -60,7 +60,6 @@ export class HomePage implements OnInit {
               }
 
   async ngOnInit() {
-    
     // Control de la interacción del usuario usando una rueda de carga
     return await this.loadingController.create({ }).then(a => {
       a.present().then(async () => { 
@@ -78,12 +77,7 @@ export class HomePage implements OnInit {
             this.sessionUser = await this.auth.getUsuario(this.sessionEmail)
       
             await this.sessionUser.pipe(take(1)).subscribe(async res=> {
-              
-              //  Actualizar la págicna con las opciones del mennu de acuerdo a su rol
-              if(!this.auth.sideMenu) {
-                window.location.reload();
-              }
-              
+              this.auth.sideMenu = res[0].role
               // Verificar si el usuario está asignado a una familia
               if(res[0].id_familia === '-1'){
                 this.router.navigate(["/login"])

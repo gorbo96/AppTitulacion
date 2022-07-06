@@ -6,12 +6,25 @@
           <ion-list-header>{{name}}</ion-list-header>
           <ion-note>{{email}}</ion-note>
 
-          <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-            <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
-              <ion-icon slot="start" [name]="p.icon"></ion-icon>
-              <ion-label>{{ p.title }}</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
+          <div *ngIf="auth.sideMenu == 'A'">
+            <ion-menu-toggle auto-hide="false" *ngFor="let p of appPagesAdmin; let i = index">
+              <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
+                <ion-icon slot="start" [name]="p.icon"></ion-icon>
+                <ion-label>{{ p.title }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </div>
+
+          <div *ngIf="auth.sideMenu == 'U'">
+            <ion-menu-toggle auto-hide="false" *ngFor="let p of appPagesUser; let i = index">
+              <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
+                <ion-icon slot="start" [name]="p.icon"></ion-icon>
+                <ion-label>{{ p.title }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </div>
+          
+
         </ion-list>
 
       </ion-content>
