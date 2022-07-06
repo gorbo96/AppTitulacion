@@ -17,11 +17,11 @@ android {
         }
         
     }
-    configurations.all {
+    /**configurations.all {
         resolutionStrategy {
             force 'androidx.browser:browser:1.2.0'
         }
-    }
+    }**/
     buildTypes {
         release {
             minifyEnabled false

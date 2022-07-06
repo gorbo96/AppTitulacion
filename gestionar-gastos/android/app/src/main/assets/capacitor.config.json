@@ -3,13 +3,7 @@
 	"appName": "GestionarGastos",
 	"webDir": "www",
 	"bundledWebRuntime": false,
-	"plugins": {
-		"FirebaseAuthentication": {
-			"skipNativeAuth": false,
-			"providers": [
-				"apple.com",
-				"google.com"
-			]
-		}
+	"server": {
+		"url": "http://192.168.18.7:8100"
 	}
 }

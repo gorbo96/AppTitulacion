@@ -10,7 +10,6 @@ import * as firebase from 'firebase/compat/app';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { User } from '../domain/user';
 import { Router } from '@angular/router';
-import { Plugins } from '@capacitor/core';
 
 
 @Injectable({
