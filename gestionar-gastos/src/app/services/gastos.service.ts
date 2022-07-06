@@ -79,5 +79,20 @@ export class GastosService {
 
     return this.http.post<any>(environment.HOME_FUNC_PATH, body, httpOptions).toPromise();
   }
+
+  categoryData(id: any){
+    let body = new URLSearchParams();
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/x-www-form-urlencoded',
+        'Access-Control-Allow-Origin': "*"
+      })
+    };
+
+    body.set('id_familia', id);
+
+    return this.http.post<any>(environment.CATEGORY_FUNC_PATH, body, httpOptions).toPromise();
+  }
   
 }

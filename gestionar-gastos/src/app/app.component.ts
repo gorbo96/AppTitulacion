@@ -9,8 +9,8 @@ import { AuthenticationService } from './services/authentication.service';
 })
 export class AppComponent implements OnInit {
 
-  private name: any
-  private email: any
+  public name: any
+  public email: any
   private sessionUser : any
 
   private appPagesAdmin = [

@@ -114,3 +114,187 @@ export const regressionReq = functions.https.onRequest((request, response) => {
         });
   });
 });
+
+export const homeReq = functions.https.onRequest((request, response) => {
+  cors(request, response, () => {
+    functions.logger.info("Petition requested for HOME."
+        , {structuredData: true});
+
+    response.set("Access-Control-Allow-Origin", "*");
+    response.set("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS");
+    response.set("Access-Control-Allow-Headers", "*");
+
+    const familyID = request.body.id_familia;
+    let presp: number;
+    let prespGst = 0;
+    let gastoTot = 0;
+    let firsDay = 0;
+    let gastosMes: any = [];
+
+    admin.firestore().collection("gastos")
+        .where("id_familia", "==", familyID ).get()
+        .then((res) => {
+          admin.firestore().collection("families")
+              .where("id", "==", familyID ).get()
+              .then((fam) => {
+                res.forEach((doc) => {
+                  gastosMes.push(doc.data());
+                });
+
+                fam.forEach((doc) => {
+                  presp = doc.data().presupuesto_global;
+                  firsDay = doc.data().primer_dia_mes;
+                });
+
+                let auxDate1:any = (new Date((new Date().setDate(firsDay+1))))
+                    .toISOString().substring(0, 10);
+                let auxDate2:any = new Date((new Date((new Date().setDate(0))))
+                    .setDate(firsDay)).toISOString().substring(0, 10);
+
+                auxDate1 = (new Date(auxDate1)).getTime();
+                auxDate2 = (new Date(auxDate2)).getTime();
+
+                gastosMes = gastosMes.filter((data) =>{
+                  const date = (new Date(data.fecha)).getTime();
+                  return (date<=auxDate1 && date>=auxDate2);
+                });
+
+                gastosMes.forEach((element) => {
+                  gastoTot+=element.monto;
+                });
+
+                if (gastoTot >= presp) {
+                  prespGst = 0;
+                } else {
+                  prespGst = presp-gastoTot;
+                }
+
+                const jsonRes ={
+                  presp: presp,
+                  prespGst: prespGst,
+                  gastoTot: gastoTot,
+                };
+
+                response.send(jsonRes);
+              })
+              .catch((error) => {
+                // En caso de un error
+                console.log(error);
+                functions.logger.info(error, {structuredData: true});
+                response.status(500).send({"error": error});
+              });
+        })
+        .catch((error) => {
+          // En caso de un error
+          console.log(error);
+          functions.logger.info(error, {structuredData: true});
+          response.status(500).send({"error": error});
+        });
+  });
+});
+
+export const categoryReq = functions.https.onRequest((request, response) => {
+  cors(request, response, () => {
+    functions.logger.info("Petition requested for REPORTS."
+        , {structuredData: true});
+
+    response.set("Access-Control-Allow-Origin", "*");
+    response.set("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS");
+    response.set("Access-Control-Allow-Headers", "*");
+
+    const familyID = request.body.id_familia;
+    let gastosMes: any = [];
+    let firsDay = 0;
+    let presp: number;
+
+    // Variables para los totales de gastos en cada categoria
+    let gastoSalud=0.0;
+    let gastoTransporte=0.0;
+    let gastoVivienda=0.0;
+    let gastoOcio=0.0;
+    let gastoEducacion=0.0;
+    let gastoAlimentacion=0.0;
+    let gastoServicios=0.0;
+
+    admin.firestore().collection("gastos")
+        .where("id_familia", "==", familyID ).get()
+        .then((res) => {
+          admin.firestore().collection("families")
+              .where("id", "==", familyID ).get()
+              .then((fam) => {
+                res.forEach((doc) => {
+                  gastosMes.push(doc.data());
+                });
+
+                fam.forEach((doc) => {
+                  presp = doc.data().presupuesto_global;
+                  firsDay = doc.data().primer_dia_mes;
+                });
+
+                let auxDate1:any = (new Date((new Date().setDate(firsDay+1))))
+                    .toISOString().substring(0, 10);
+                let auxDate2:any = new Date((new Date((new Date().setDate(0))))
+                    .setDate(firsDay)).toISOString().substring(0, 10);
+
+                auxDate1 = (new Date(auxDate1)).getTime();
+                auxDate2 = (new Date(auxDate2)).getTime();
+
+                gastosMes = gastosMes.filter((data) =>{
+                  const date = (new Date(data.fecha)).getTime();
+                  return (date<=auxDate1 && date>=auxDate2);
+                });
+
+                gastosMes.forEach((element) => {
+                  if (element.id_categoria=="834IqsQWzMFPdsE7TZKu") {
+                    gastoAlimentacion+=element.monto;
+                  }
+                  if (element.id_categoria=="yfXjC94YqUqIbn4zXMjx") {
+                    gastoServicios+=element.monto;
+                  }
+                  if (element.id_categoria=="EjKGtXUIHEnwC0MKrzIn") {
+                    gastoEducacion=element.monto;
+                  }
+                  if (element.id_categoria=="Y2xbbnUeLwCz5UhfMMJZ") {
+                    gastoOcio=element.monto;
+                  }
+                  if (element.id_categoria=="pZbMomfUFtw8u2aD0sEC") {
+                    gastoTransporte=element.monto;
+                  }
+                  if (element.id_categoria=="NgNS2EM0p4UdeAQlZ4q6") {
+                    gastoVivienda=element.monto;
+                  }
+                  if (element.id_categoria=="Mp82DGLcR5AUOEk5DSrC") {
+                    gastoSalud=element.monto;
+                  }
+                });
+
+                const jsonRes ={
+                  presp: presp,
+                  gastoAlimentacion: gastoAlimentacion,
+                  gastoServicios: gastoServicios,
+                  gastoEducacion: gastoEducacion,
+                  gastoOcio: gastoOcio,
+                  gastoTransporte: gastoTransporte,
+                  gastoVivienda: gastoVivienda,
+                  gastoSalud: gastoSalud,
+                };
+
+                response.send(jsonRes);
+              })
+              .catch((error) => {
+                // En caso de un error
+                console.log(error);
+                functions.logger.info(error, {structuredData: true});
+                response.status(500).send({"error": error});
+              });
+        })
+        .catch((error) => {
+          // En caso de un error
+          console.log(error);
+          functions.logger.info(error, {structuredData: true});
+          response.status(500).send({"error": error});
+        });
+  });
+});
+
+
