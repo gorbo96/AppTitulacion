@@ -437,7 +437,7 @@ let AuthenticationService = class AuthenticationService {
         return (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__awaiter)(this, void 0, void 0, function* () {
             if (this.platform.is('capacitor')) {
                 console.log("app en capacitor");
-                return null;
+                return yield this.nativeGoogleLogin();
             }
             else {
                 console.log("app en web");
@@ -447,34 +447,20 @@ let AuthenticationService = class AuthenticationService {
     }
     nativeGoogleLogin() {
         return (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__awaiter)(this, void 0, void 0, function* () {
-            try {
-                console.log("Antes GplusUser");
-                var gplusUser = yield this.googlePlus.login({
-                    webClientId: src_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.googleWebClientId,
-                    offline: true
-                });
-                console.log("GplusUser");
-                console.log(gplusUser);
-                yield this.afAuth.setPersistence('session').then(() => (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__awaiter)(this, void 0, void 0, function* () {
-                    const googleCredential = firebase_compat_app__WEBPACK_IMPORTED_MODULE_1__["default"].auth.GoogleAuthProvider.credential(gplusUser.idToken);
-                    yield firebase_compat_app__WEBPACK_IMPORTED_MODULE_1__["default"].auth().signInWithCredential(googleCredential).then((userCredential) => (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__awaiter)(this, void 0, void 0, function* () {
-                        this.currentUser = yield userCredential.user;
-                        console.log("Current User");
-                        console.log(this.currentUser);
-                        this.credential = yield userCredential;
-                        console.log("Credenciales");
-                        console.log(this.credential);
-                        return JSON.stringify(this.currentUser._delegate);
-                    }));
-                    //console.log(JSON.stringify(firebaseUser.user));
-                    //await this.updateUserData(this.currentUser, 'google');
+            const gplusUser = yield this.googlePlus.login({
+                webClientId: src_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.googleWebClientId,
+                offline: true
+            }).catch(err => console.log(err));
+            yield this.afAuth.setPersistence('session').then(() => (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__awaiter)(this, void 0, void 0, function* () {
+                const googleCredential = firebase_compat_app__WEBPACK_IMPORTED_MODULE_1__["default"].auth.GoogleAuthProvider.credential(gplusUser.idToken);
+                yield firebase_compat_app__WEBPACK_IMPORTED_MODULE_1__["default"].auth().signInWithCredential(googleCredential).then((userCredential) => (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__awaiter)(this, void 0, void 0, function* () {
+                    this.currentUser = yield userCredential.user;
+                    this.credential = yield userCredential;
                 }));
-            }
-            catch (error) {
-                console.log("loggin google");
-                console.log(error);
-                return JSON.stringify("null");
-            }
+                //console.log(JSON.stringify(firebaseUser.user));
+                //await this.updateUserData(this.currentUser, 'google');
+            }));
+            return yield this.currentUser;
         });
     }
     webGoogleLogin() {
