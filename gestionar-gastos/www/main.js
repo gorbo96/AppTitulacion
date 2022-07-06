@@ -163,18 +163,13 @@ let AppComponent = class AppComponent {
                     yield this.sessionUser.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.take)(1)).subscribe(res => {
                         console.log('HERE ' + res[0].email);
                         this.name = res[0].displayName;
-                        if (res[0].role === 'A') {
-                            this.appPages = this.appPagesAdmin;
-                        }
-                        else {
-                            this.appPages = this.appPagesUser;
-                        }
-                        this.auth.sideMenu = true;
+                        this.auth.sideMenu = res[0].role;
+                        //this.auth.sideMenu = true
                     });
                 }
                 catch (error) {
                     console.log('SIDEMENU: ' + error);
-                    this.auth.sideMenu = false;
+                    //this.auth.sideMenu = false
                 }
             }));
         });
@@ -313,6 +308,7 @@ let AuthenticationService = class AuthenticationService {
         this.googlePlus = googlePlus;
         this.router = router;
         this.estaLogeado = false;
+        this.sideMenu = 'D';
         afAuth.authState.
             subscribe(user => (this.estaLogeado = user));
         this.user = this.afAuth.authState.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.switchMap)(user => {
@@ -331,6 +327,7 @@ let AuthenticationService = class AuthenticationService {
                 // this.afs.collection("users", ref => ref.where("email", "==", user.email).where("password", "==", user.password)).doc().valueChanges();
                 this.afAuth.signInWithEmailAndPassword(user.email, user.password).then((userCredential) => {
                     this.currentUser = userCredential.user;
+                    this.sideMenu = this.currentUser._delegate.role;
                 }).catch(err => {
                     console.log("NOT FOUND");
                 });
@@ -456,6 +453,7 @@ let AuthenticationService = class AuthenticationService {
                 yield firebase_compat_app__WEBPACK_IMPORTED_MODULE_1__["default"].auth().signInWithCredential(googleCredential).then((userCredential) => (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__awaiter)(this, void 0, void 0, function* () {
                     this.currentUser = yield userCredential.user;
                     this.credential = yield userCredential;
+                    this.sideMenu = this.currentUser._delegate.role;
                 }));
                 //console.log(JSON.stringify(firebaseUser.user));
                 //await this.updateUserData(this.currentUser, 'google');
@@ -470,6 +468,7 @@ let AuthenticationService = class AuthenticationService {
                 yield this.afAuth.signInWithPopup(provider).then((userCredential) => (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__awaiter)(this, void 0, void 0, function* () {
                     this.currentUser = yield userCredential.user;
                     this.credential = yield userCredential;
+                    this.sideMenu = this.currentUser._delegate.role;
                 }));
                 //console.log(JSON.stringify(this.currentUser));
                 //await this.updateUserData(this.credential, 'google')
@@ -902,7 +901,7 @@ module.exports = "ion-menu ion-content {\n  --background: var(--ion-item-backgro
 /***/ ((module) => {
 
 "use strict";
-module.exports = "<ion-app>\r\n  <ion-split-pane contentId=\"main-content\">\r\n    <ion-menu contentId=\"main-content\" type=\"overlay\">\r\n      <ion-content>\r\n        <ion-list id=\"inbox-list\">\r\n          <ion-list-header>{{name}}</ion-list-header>\r\n          <ion-note>{{email}}</ion-note>\r\n\r\n          <ion-menu-toggle auto-hide=\"false\" *ngFor=\"let p of appPages; let i = index\">\r\n            <ion-item routerDirection=\"root\" [routerLink]=\"[p.url]\" lines=\"none\" detail=\"false\" routerLinkActive=\"selected\">\r\n              <ion-icon slot=\"start\" [name]=\"p.icon\"></ion-icon>\r\n              <ion-label>{{ p.title }}</ion-label>\r\n            </ion-item>\r\n          </ion-menu-toggle>\r\n        </ion-list>\r\n\r\n      </ion-content>\r\n    </ion-menu>\r\n    <ion-router-outlet id=\"main-content\"></ion-router-outlet>\r\n  </ion-split-pane>\r\n</ion-app>\r\n";
+module.exports = "<ion-app>\r\n  <ion-split-pane contentId=\"main-content\">\r\n    <ion-menu contentId=\"main-content\" type=\"overlay\">\r\n      <ion-content>\r\n        <ion-list id=\"inbox-list\">\r\n          <ion-list-header>{{name}}</ion-list-header>\r\n          <ion-note>{{email}}</ion-note>\r\n\r\n          <div *ngIf=\"auth.sideMenu == 'A'\">\r\n            <ion-menu-toggle auto-hide=\"false\" *ngFor=\"let p of appPagesAdmin; let i = index\">\r\n              <ion-item routerDirection=\"root\" [routerLink]=\"[p.url]\" lines=\"none\" detail=\"false\" routerLinkActive=\"selected\">\r\n                <ion-icon slot=\"start\" [name]=\"p.icon\"></ion-icon>\r\n                <ion-label>{{ p.title }}</ion-label>\r\n              </ion-item>\r\n            </ion-menu-toggle>\r\n          </div>\r\n\r\n          <div *ngIf=\"auth.sideMenu == 'U'\">\r\n            <ion-menu-toggle auto-hide=\"false\" *ngFor=\"let p of appPagesUser; let i = index\">\r\n              <ion-item routerDirection=\"root\" [routerLink]=\"[p.url]\" lines=\"none\" detail=\"false\" routerLinkActive=\"selected\">\r\n                <ion-icon slot=\"start\" [name]=\"p.icon\"></ion-icon>\r\n                <ion-label>{{ p.title }}</ion-label>\r\n              </ion-item>\r\n            </ion-menu-toggle>\r\n          </div>\r\n          \r\n\r\n        </ion-list>\r\n\r\n      </ion-content>\r\n    </ion-menu>\r\n    <ion-router-outlet id=\"main-content\"></ion-router-outlet>\r\n  </ion-split-pane>\r\n</ion-app>\r\n";
 
 /***/ })
 

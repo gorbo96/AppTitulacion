@@ -149,10 +149,7 @@ let HomePage = class HomePage {
                             //    el email proporcionado por la API de autentificación
                             this.sessionUser = yield this.auth.getUsuario(this.sessionEmail);
                             yield this.sessionUser.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1)).subscribe((res) => (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
-                                //  Actualizar la págicna con las opciones del mennu de acuerdo a su rol
-                                if (!this.auth.sideMenu) {
-                                    window.location.reload();
-                                }
+                                this.auth.sideMenu = res[0].role;
                                 // Verificar si el usuario está asignado a una familia
                                 if (res[0].id_familia === '-1') {
                                     this.router.navigate(["/login"]);
