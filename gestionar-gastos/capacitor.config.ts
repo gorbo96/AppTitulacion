@@ -4,7 +4,7 @@ const config: CapacitorConfig = {
   appId: 'com.gestionargastos.app',
   appName: 'GestionarGastos',
   webDir: 'www',
-  bundledWebRuntime: false
+  bundledWebRuntime: false,
 };
 
 export default config;

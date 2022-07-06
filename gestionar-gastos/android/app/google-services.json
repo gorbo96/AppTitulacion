@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "519785918958-do3b8ncnladqk29d9n8md35diuhlhfah.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gestionargastos.app",
+            "certificate_hash": "9bc610b43f039a99d8e023bebbad9f3d4127c08f"
+          }
+        },
+        {
           "client_id": "519785918958-jfm7103u07hu0sfoprgku3jvp7kk7ire.apps.googleusercontent.com",
           "client_type": 3
         }
