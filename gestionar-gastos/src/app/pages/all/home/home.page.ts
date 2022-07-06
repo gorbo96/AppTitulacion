@@ -9,6 +9,7 @@ import { GastosService } from 'src/app/services/gastos.service';
 import { LocalNotifications } from '@awesome-cordova-plugins/local-notifications/ngx';
 import { PresupuestosService } from 'src/app/services/presupuestos.service';
 import { DATE_PIPE_DEFAULT_TIMEZONE } from '@angular/common';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-home',
@@ -55,7 +56,8 @@ export class HomePage implements OnInit {
               private gastoService: GastosService,
               private localNotifications: LocalNotifications,
               private presupuestoService: PresupuestosService,
-              private routerOutlet: IonRouterOutlet) { 
+              private routerOutlet: IonRouterOutlet,
+              private appComp: AppComponent) { 
                 this.routerOutlet.swipeGesture = false
               }
 
@@ -78,6 +80,8 @@ export class HomePage implements OnInit {
       
             await this.sessionUser.pipe(take(1)).subscribe(async res=> {
               this.auth.sideMenu = res[0].role
+              this.appComp.email = res[0].email
+              this.appComp.name = res[0].displayName
               // Verificar si el usuario está asignado a una familia
               if(res[0].id_familia === '-1'){
                 this.router.navigate(["/login"])

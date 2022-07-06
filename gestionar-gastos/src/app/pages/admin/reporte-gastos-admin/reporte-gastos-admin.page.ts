@@ -34,6 +34,8 @@ export class ReporteGastosAdminPage implements AfterViewInit {
   familia:any
   usuarios:any
   presupuestos:any
+  resReqHome: any
+  resReqCategory: any
 
   //Variables para una notificacion especifica
   alert: string
@@ -44,15 +46,6 @@ export class ReporteGastosAdminPage implements AfterViewInit {
   presp=0.0//Variable para el presupuesto total de la familia
   prespGst=0.0//Variable para el monto restante del presupuesto total de la familia
   gastoTot=0.0//Variable para el total de los gastos de la familia
-
-  //Variables para los totales de gastos en cada categoria
-  gastoSalud=0.0
-  gastoTransporte=0.0
-  gastoVivienda=0.0
-  gastoOcio=0.0
-  gastoEducacion=0.0
-  gastoAlimentacion=0.0
-  gastoServicios=0.0
 
   //Variables para las cantidades de presupuesto de cada categoria
   presupuestoSalud=0.0
@@ -122,81 +115,49 @@ export class ReporteGastosAdminPage implements AfterViewInit {
     this.sessionUser = await this.auth.getUserAuth()//Utilizacion del servicio para obtener usuario que inicio sesion mediante Firebase        
     this.sessionUser.pipe(take(1)).subscribe(async user =>{//Recorrido de respuesta del servicio      
       this.usuario = await this.auth.getUsuario(user.email)//Utilizacion de servicio para obtener usuario en base a consulta base de datos
-      this.usuario.pipe(take(1)).subscribe(user =>{
+      this.usuario.pipe(take(1)).subscribe(async user =>{
         this.usuarios=this.gastoService.obtenerusrFamilia(user[0].id_familia)//Utilizacion de servicio para obtener los usuarios miembros de la familia del usuario en base a consulta base de datos
         this.familia=this.presupuestoService.obtenerFamilia(user[0].id_familia)//Utilizacion de servicio para obtener familia del usuario en base a consulta base de datos
         this.presupuestos=this.presupuestoService.obtenerPresupuestos(user[0].id_familia)//Utilizacion de servicio para obtener presupuestos de la familia en base a consulta base de datos
-        this.familia.pipe(take(1)).subscribe(fam=>{
-          this.presp=fam[0].presupuesto_global//Asignacion de valor
-          this.usuarios.pipe(take(1)).subscribe(user =>{
-            for (let index = 0; index < user.length; index++) {
-              this.gastos=this.gastoService.obtenerGastos(user[index].uid)//Utilizacion de servicio para obtener gastos del usuario en base a consulta base de datos
-              this.gastos.pipe(take(1)).subscribe(gasto =>{
-                this.gastosMes = gasto.filter(data => (new Date(data.fecha)).getMonth() == (new Date).getMonth())
+        
+        await this.gastoService.homeChartData(user[0].id_familia).then((res) => {
+          this.resReqHome = res
+        });
 
-                for (let index = 0; index < this.gastosMes.length; index++) {
-                  this.gastoTot+=this.gastosMes[index].monto //Sumatoria de todos los gastos
-                  //Calculo de gastos de las diferentes categorias, se diferencian mediante codigo almacenado en firebase
-                  if(gasto[index].id_categoria=="834IqsQWzMFPdsE7TZKu"){
-                    this.gastoAlimentacion+=gasto[index].monto
-                  }
-                  if(gasto[index].id_categoria=="yfXjC94YqUqIbn4zXMjx"){
-                    this.gastoServicios+=gasto[index].monto
-                  }
-                  if(gasto[index].id_categoria=="EjKGtXUIHEnwC0MKrzIn"){
-                    this.gastoEducacion=gasto[index].monto
-                  }
-                  if(gasto[index].id_categoria=="Y2xbbnUeLwCz5UhfMMJZ"){
-                    this.gastoOcio=gasto[index].monto
-                  }
-                  if(gasto[index].id_categoria=="pZbMomfUFtw8u2aD0sEC"){
-                    this.gastoTransporte=gasto[index].monto
-                  }
-                  if(gasto[index].id_categoria=="NgNS2EM0p4UdeAQlZ4q6"){
-                    this.gastoVivienda=gasto[index].monto
-                  }
-                  if(gasto[index].id_categoria=="Mp82DGLcR5AUOEk5DSrC"){
-                    this.gastoSalud=gasto[index].monto
-                  }
-                }
-                if(this.gastoTot>=this.presp){
-                  this.prespGst=0//En caso de que el gasto total sea mayor al presupuesto general, el presupuesto restante es 0
-                }else {
-                  this.prespGst=this.presp-this.gastoTot//Caso contrario el gasto total es la resta del presupuesto menos los gastos
-                }
-                this.presupuestos.pipe(take(1)).subscribe(prespt =>{
-                  for (let index = 0; index < prespt.length; index++) {
-                    //Asignacion de valores de las diferentes categorias, se diferencian mediante codigo almacenado en firebase
-                    if(prespt[index].id_categoria=="834IqsQWzMFPdsE7TZKu"){
-                      this.presupuestoAlimentacion=prespt[index].cantidad
-                    }
-                    if(prespt[index].id_categoria=="yfXjC94YqUqIbn4zXMjx"){
-                      this.presupuestoServicios=prespt[index].cantidad
-                    }
-                    if(prespt[index].id_categoria=="EjKGtXUIHEnwC0MKrzIn"){
-                      this.presupuestoEducacion=prespt[index].cantidad
-                    }
-                    if(prespt[index].id_categoria=="Y2xbbnUeLwCz5UhfMMJZ"){
-                      this.presupuestoOcio=prespt[index].cantidad
-                    }
-                    if(prespt[index].id_categoria=="pZbMomfUFtw8u2aD0sEC"){
-                      this.presupuestoTransporte=prespt[index].cantidad
-                    }
-                    if(prespt[index].id_categoria=="NgNS2EM0p4UdeAQlZ4q6"){
-                      this.presupuestoVivienda=prespt[index].cantidad
-                    }
-                    if(prespt[index].id_categoria=="Mp82DGLcR5AUOEk5DSrC"){
-                      this.presupuestoSalud=prespt[index].cantidad
-                    }                      
-                  }
-                  //Llamado a las funciones correspondientes para generar un grafico para cada categoria                  
-                  this.graficaEstrella() //Comparativa entre presupuestos
-                  a.dismiss().then(() => console.log('abort presenting'))//Termino de pantalla de carga
-                })                  
-              })
-            }                                         
-          })
+        await this.gastoService.categoryData(user[0].id_familia).then((res) => {
+          this.resReqCategory = res
+        });
+        
+        this.presupuestos.pipe(take(1)).subscribe(prespt =>{
+          for (let index = 0; index < prespt.length; index++) {
+            //Asignacion de valores de las diferentes categorias, se diferencian mediante codigo almacenado en firebase
+            if(prespt[index].id_categoria=="834IqsQWzMFPdsE7TZKu"){
+              this.presupuestoAlimentacion=prespt[index].cantidad
+            }
+            if(prespt[index].id_categoria=="yfXjC94YqUqIbn4zXMjx"){
+              this.presupuestoServicios=prespt[index].cantidad
+            }
+            if(prespt[index].id_categoria=="EjKGtXUIHEnwC0MKrzIn"){
+              this.presupuestoEducacion=prespt[index].cantidad
+            }
+            if(prespt[index].id_categoria=="Y2xbbnUeLwCz5UhfMMJZ"){
+              this.presupuestoOcio=prespt[index].cantidad
+            }
+            if(prespt[index].id_categoria=="pZbMomfUFtw8u2aD0sEC"){
+              this.presupuestoTransporte=prespt[index].cantidad
+            }
+            if(prespt[index].id_categoria=="NgNS2EM0p4UdeAQlZ4q6"){
+              this.presupuestoVivienda=prespt[index].cantidad
+            }
+            if(prespt[index].id_categoria=="Mp82DGLcR5AUOEk5DSrC"){
+              this.presupuestoSalud=prespt[index].cantidad
+            }                      
+          }
+          //Llamado a las funciones correspondientes para generar un grafico para cada categoria                  
+          this.graficaEstrella() //Comparativa entre presupuestos
+          a.dismiss().then(() => console.log('abort presenting'))//Termino de pantalla de carga
         })
+        
       })      
     })
   } 
@@ -219,7 +180,7 @@ export class ReporteGastosAdminPage implements AfterViewInit {
         labels: ['Presupuesto', 'Presupuesto Restante', 'Gastos Totales'],//Etiquetas
         datasets: [{
           label: 'Cantidad en Dolares $',//Etiqueta
-          data: [this.presp, this.prespGst, this.gastoTot],//Datos a mostrar acorde a las etiquetas
+          data: [this.resReqHome.presp, this.resReqHome.prespGst, this.resReqHome.gastoTot],//Datos a mostrar acorde a las etiquetas
           backgroundColor: [
             //Colores definidos para las partes del area a graficar
             'rgba(255, 159, 64, 0.4)',
@@ -242,10 +203,10 @@ export class ReporteGastosAdminPage implements AfterViewInit {
       this.saludChart.destroy()
     }
     var aux=0.0    
-    if (this.gastoSalud>=this.presupuestoSalud){
+    if (this.resReqCategory.gastoSalud>=this.resReqCategory.presupuestoSalud){
       aux=0
     } else{
-      aux=this.presupuestoSalud-this.gastoSalud
+      aux=this.presupuestoSalud-this.resReqCategory.gastoSalud
     }
     this.saludChart = new Chart(this.saludCanvas.nativeElement, {
       type: 'polarArea',
@@ -262,7 +223,7 @@ export class ReporteGastosAdminPage implements AfterViewInit {
         labels: ['Presupuesto', 'Presupuesto Restante', 'Gastos Totales'],
         datasets: [{
           label: 'Cantidad en Dolares $',
-          data: [this.presupuestoSalud, aux, this.gastoSalud],
+          data: [this.presupuestoSalud, aux, this.resReqCategory.gastoSalud],
           backgroundColor: [
             'rgba(255, 159, 64, 0.4)',
             'rgba(54, 162, 235, 0.4)',                          
@@ -284,10 +245,10 @@ export class ReporteGastosAdminPage implements AfterViewInit {
       this.viviendaChart.destroy()
     }
     var aux=0.0
-    if (this.gastoVivienda>=this.presupuestoVivienda){
+    if (this.resReqCategory.gastoVivienda>=this.resReqCategory.presupuestoVivienda){
       aux=0.0
     } else{
-      aux=this.presupuestoVivienda-this.gastoVivienda
+      aux=this.presupuestoVivienda-this.resReqCategory.gastoVivienda
     }
     this.viviendaChart = new Chart(this.viviendaCanvas.nativeElement, {
       type: 'polarArea',
@@ -304,7 +265,7 @@ export class ReporteGastosAdminPage implements AfterViewInit {
         labels: ['Presupuesto', 'Presupuesto Restante', 'Gastos Totales'],
         datasets: [{
           label: 'Cantidad en Dolares $',
-          data: [this.presupuestoVivienda, aux, this.gastoVivienda],
+          data: [this.presupuestoVivienda, aux, this.resReqCategory.gastoVivienda],
           backgroundColor: [
             'rgba(255, 159, 64, 0.4)',
             'rgba(54, 162, 235, 0.4)',                          
@@ -326,10 +287,10 @@ export class ReporteGastosAdminPage implements AfterViewInit {
       this.transporteChart.destroy()
     }
     var aux=0.0
-    if (this.gastoTransporte>=this.presupuestoTransporte){
+    if (this.resReqCategory.gastoTransporte>=this.presupuestoTransporte){
       aux=0
     } else{
-      aux=this.presupuestoTransporte-this.gastoTransporte
+      aux=this.presupuestoTransporte-this.resReqCategory.gastoTransporte
     }
     this.transporteChart = new Chart(this.transporteCanvas.nativeElement, {
       type: 'polarArea',
@@ -346,7 +307,7 @@ export class ReporteGastosAdminPage implements AfterViewInit {
         labels: ['Presupuesto', 'Presupuesto Restante', 'Gastos Totales'],
         datasets: [{
           label: 'Cantidad en Dolares $',
-          data: [this.presupuestoTransporte, aux, this.gastoTransporte],
+          data: [this.presupuestoTransporte, aux, this.resReqCategory.gastoTransporte],
           backgroundColor: [
             'rgba(255, 159, 64, 0.4)',
             'rgba(54, 162, 235, 0.4)',                          
@@ -368,10 +329,10 @@ export class ReporteGastosAdminPage implements AfterViewInit {
       this.ocioChart.destroy()
     }
     var aux=0.0
-    if (this.gastoOcio>=this.presupuestoOcio){
+    if (this.resReqCategory.gastoOcio>=this.presupuestoOcio){
       aux=0
     } else{
-      aux=this.presupuestoOcio-this.gastoOcio
+      aux=this.presupuestoOcio-this.resReqCategory.gastoOcio
     }
     this.ocioChart = new Chart(this.ocioCanvas.nativeElement, {
       type: 'polarArea',
@@ -388,7 +349,7 @@ export class ReporteGastosAdminPage implements AfterViewInit {
         labels: ['Presupuesto', 'Presupuesto Restante', 'Gastos Totales'],
         datasets: [{
           label: 'Cantidad en Dolares $',
-          data: [this.presupuestoOcio, aux, this.gastoOcio],
+          data: [this.presupuestoOcio, aux, this.resReqCategory.gastoOcio],
           backgroundColor: [
             'rgba(255, 159, 64, 0.4)',
             'rgba(54, 162, 235, 0.4)',                          
@@ -410,10 +371,10 @@ export class ReporteGastosAdminPage implements AfterViewInit {
       this.educacionChart.destroy()
     }
     var aux=0.0
-    if (this.gastoEducacion>=this.presupuestoEducacion){
+    if (this.resReqCategory.gastoEducacion>=this.presupuestoEducacion){
       aux=0
     } else{
-      aux=this.presupuestoEducacion-this.gastoEducacion
+      aux=this.presupuestoEducacion-this.resReqCategory.gastoEducacion
     }
     this.educacionChart = new Chart(this.educacionCanvas.nativeElement, {
       type: 'polarArea',
@@ -430,7 +391,7 @@ export class ReporteGastosAdminPage implements AfterViewInit {
         labels: ['Presupuesto', 'Presupuesto Restante', 'Gastos Totales'],
         datasets: [{
           label: 'Cantidad en Dolares $',
-          data: [this.presupuestoEducacion, aux, this.gastoEducacion],
+          data: [this.presupuestoEducacion, aux, this.resReqCategory.gastoEducacion],
           backgroundColor: [
             'rgba(255, 159, 64, 0.4)',
             'rgba(54, 162, 235, 0.4)',                          
@@ -452,10 +413,10 @@ export class ReporteGastosAdminPage implements AfterViewInit {
       this.serviciosChart.destroy()
     }
     var aux=0.0
-    if (this.gastoServicios>=this.presupuestoServicios){
+    if (this.resReqCategory.gastoServicios>=this.presupuestoServicios){
       aux=0
     } else{
-      aux=this.presupuestoServicios-this.gastoServicios
+      aux=this.presupuestoServicios-this.resReqCategory.gastoServicios
     }
     this.serviciosChart = new Chart(this.serviciosCanvas.nativeElement, {
       type: 'polarArea',
@@ -472,7 +433,7 @@ export class ReporteGastosAdminPage implements AfterViewInit {
         labels: ['Presupuesto', 'Presupuesto Restante', 'Gastos Totales'],
         datasets: [{
           label: 'Cantidad en Dolares $',
-          data: [this.presupuestoServicios, aux, this.gastoServicios],
+          data: [this.presupuestoServicios, aux, this.resReqCategory.gastoServicios],
           backgroundColor: [
             'rgba(255, 159, 64, 0.4)',
             'rgba(54, 162, 235, 0.4)',                          
@@ -494,10 +455,10 @@ export class ReporteGastosAdminPage implements AfterViewInit {
       this.alimentacionChart.destroy()
     }
     var aux=0.0
-    if (this.gastoAlimentacion>=this.presupuestoAlimentacion){
+    if (this.resReqCategory.gastoAlimentacion>=this.presupuestoAlimentacion){
       aux=0
     } else{
-      aux=this.presupuestoAlimentacion-this.gastoAlimentacion
+      aux=this.presupuestoAlimentacion-this.resReqCategory.gastoAlimentacion
     }
     this.alimentacionChart = new Chart(this.alimentacionCanvas.nativeElement, {
       type: 'polarArea',
@@ -514,7 +475,7 @@ export class ReporteGastosAdminPage implements AfterViewInit {
         labels: ['Presupuesto', 'Presupuesto Restante', 'Gastos Totales'],
         datasets: [{
           label: 'Cantidad en Dolares $',
-          data: [this.presupuestoAlimentacion, aux, this.gastoAlimentacion],
+          data: [this.presupuestoAlimentacion, aux, this.resReqCategory.gastoAlimentacion],
           backgroundColor: [
             'rgba(255, 159, 64, 0.4)',
             'rgba(54, 162, 235, 0.4)',                          
@@ -543,13 +504,13 @@ export class ReporteGastosAdminPage implements AfterViewInit {
           label: 'Porcentaje de Consumo',
           //Calculo de porcentaje para cada categoria
           //Regla de 3, siendo 100% el presupuesto, calculo de porcentaje de gasto
-          data: [(this.gastoAlimentacion*100/this.presupuestoAlimentacion),
-          (this.gastoServicios*100/this.presupuestoServicios),
-          (this.gastoEducacion*100/this.presupuestoEducacion),
-          (this.gastoOcio*100/this.presupuestoOcio),
-          (this.gastoTransporte*100/this.presupuestoTransporte),
-          (this.gastoVivienda*100/this.presupuestoVivienda),
-          (this.gastoSalud*100/this.presupuestoSalud)
+          data: [(this.resReqCategory.gastoAlimentacion*100/this.presupuestoAlimentacion),
+          (this.resReqCategory.gastoServicios*100/this.presupuestoServicios),
+          (this.resReqCategory.gastoEducacion*100/this.presupuestoEducacion),
+          (this.resReqCategory.gastoOcio*100/this.presupuestoOcio),
+          (this.resReqCategory.gastoTransporte*100/this.presupuestoTransporte),
+          (this.resReqCategory.gastoVivienda*100/this.presupuestoVivienda),
+          (this.resReqCategory.gastoSalud*100/this.presupuestoSalud)
         ],
           fill: true,//Relleno de area conformada por dos lineas
           backgroundColor: 'rgba(255, 159, 64, 0.4)',//Color de relleno
