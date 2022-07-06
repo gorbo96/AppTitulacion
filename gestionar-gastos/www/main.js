@@ -589,6 +589,7 @@ const environment = {
     },
     RG_FUNC_PATH: "https://us-central1-gestionar-gastos.cloudfunctions.net/regressionReq",
     HOME_FUNC_PATH: "https://us-central1-gestionar-gastos.cloudfunctions.net/homeReq",
+    CATEGORY_FUNC_PATH: "https://us-central1-gestionar-gastos.cloudfunctions.net/categoryReq",
     googleWebClientId: "519785918958-jfm7103u07hu0sfoprgku3jvp7kk7ire.apps.googleusercontent.com"
 };
 /*

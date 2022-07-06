@@ -115,8 +115,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let LoginPage = class LoginPage {
-    constructor(auth, AuthenticationService, router, alertCtrl, loadingController, menuCtrl, userService) {
-        this.auth = auth;
+    constructor(afAuth, AuthenticationService, router, alertCtrl, loadingController, menuCtrl, userService) {
+        this.afAuth = afAuth;
         this.AuthenticationService = AuthenticationService;
         this.router = router;
         this.alertCtrl = alertCtrl;
@@ -180,61 +180,53 @@ let LoginPage = class LoginPage {
                 a.present().then(() => (0,tslib__WEBPACK_IMPORTED_MODULE_6__.__awaiter)(this, void 0, void 0, function* () {
                     try {
                         // Iniciar sesión con el usuario ingresado
-                        yield this.AuthenticationService.onLogin(this.User);
-                        // Garantizar una conexión estable con Firebase implementando un regtraso
-                        setTimeout(() => (0,tslib__WEBPACK_IMPORTED_MODULE_6__.__awaiter)(this, void 0, void 0, function* () {
-                            if (this.AuthenticationService.currentUser == null ||
-                                this.AuthenticationService.currentUser == undefined) {
-                                //console.log('HTTP Error', err);
-                                this.alert = "Ocurrió un error al cargar sus datos";
+                        //await this.AuthenticationService.onLogin(this.User);       
+                        this.afAuth.setPersistence('session').then(() => {
+                            // this.afs.collection("users", ref => ref.where("email", "==", user.email).where("password", "==", user.password)).doc().valueChanges();
+                            this.afAuth.signInWithEmailAndPassword(this.User.email, this.User.password).then((userCredential) => {
+                                // Garantizar una conexión estable con Firebase implementando un regtraso
+                                setTimeout(() => (0,tslib__WEBPACK_IMPORTED_MODULE_6__.__awaiter)(this, void 0, void 0, function* () {
+                                    this.AuthenticationService.currentUser = userCredential.user;
+                                    this.AuthenticationService.sideMenu = this.AuthenticationService.currentUser._delegate.role;
+                                    // Verificación del logeo para control de excepciones si no se ingresan datos
+                                    if (this.User.email && this.User.password) {
+                                        // Obtener los datos del usurio de FireStore dado- 
+                                        //    el email proporcionado por la API de autentificación
+                                        this.user2 = yield this.AuthenticationService.getUsuario(this.User.email);
+                                        // Actualizar datos de usuario
+                                        yield this.user2.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.take)(1)).subscribe(res => {
+                                            this.AuthenticationService.timeStampLogin(res[0]);
+                                            this.aux = res[0];
+                                            if (res[0].id_familia === "-1" && res.length > 0) {
+                                                a.dismiss().then(() => console.log('abort presenting'));
+                                                this.router.navigate(["/createfamily"]);
+                                            }
+                                            else if (res[0].id_familia !== "-1" && res.length > 0) {
+                                                a.dismiss().then(() => console.log('abort presenting'));
+                                                this.router.navigate(["/home"]);
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        console.log("error en el loggeo");
+                                        this.alert = "Los Datos ingresados son incorrectos";
+                                        this.advice = 'Por favor, ingréselos de nuevo';
+                                        //  Terminar la carga de la página
+                                        a.dismiss().then(() => console.log('abort presenting'));
+                                        //  Mostrar mensaje de al usuario
+                                        this.genericAlert(this.alert, this.advice);
+                                    }
+                                }), 2000);
+                            }).catch(err => {
+                                console.log("NOT FOUND");
+                                this.alert = "Ocurrió un error al iniciar sesión";
                                 this.advice = 'Correo electrónico o contraseña incorrecta';
                                 //  Terminar la carga de la página
                                 a.dismiss().then(() => console.log('abort presenting'));
                                 //  Mostrar mensaje de al usuario
                                 return this.genericAlert(this.alert, this.advice);
-                            }
-                            // Verificación del logeo para control de excepciones si no se ingresan datos
-                            if (this.User.email && this.User.password) {
-                                // Obtener los datos del usurio de FireStore dado- 
-                                //    el email proporcionado por la API de autentificación
-                                this.user2 = yield this.AuthenticationService.getUsuario(this.User.email);
-                                // Control de errores
-                                try {
-                                    yield this.user2.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.take)(1)).subscribe(res => {
-                                        this.AuthenticationService.timeStampLogin(res[0]);
-                                        this.aux = res[0];
-                                        if (res[0].id_familia === "-1" && res.length > 0) {
-                                            a.dismiss().then(() => console.log('abort presenting'));
-                                            this.router.navigate(["/createfamily"]);
-                                        }
-                                        else if (res[0].id_familia !== "-1" && res.length > 0) {
-                                            a.dismiss().then(() => console.log('abort presenting'));
-                                            this.router.navigate(["/home"]);
-                                        }
-                                    });
-                                }
-                                catch (error) {
-                                    this.alert = "Ocurrió un error con el inicio de sesión";
-                                    this.advice = 'Por favor, inténtelo de nuevo';
-                                    //  Terminar la carga de la página
-                                    a.dismiss().then(() => console.log('abort presenting'));
-                                    //  Mostrar mensaje de al usuario
-                                    this.genericAlert(this.alert, this.advice);
-                                }
-                                finally {
-                                    a.dismiss().then(() => console.log('abort presenting'));
-                                }
-                            }
-                            else {
-                                console.log("error en el loggeo");
-                                this.alert = "Los Datos ingresados son incorrectos";
-                                this.advice = 'Por favor, ingréselos de nuevo';
-                                //  Terminar la carga de la página
-                                a.dismiss().then(() => console.log('abort presenting'));
-                                //  Mostrar mensaje de al usuario
-                                this.genericAlert(this.alert, this.advice);
-                            }
-                        }), 4000);
+                            });
+                        });
                     }
                     catch (error) {
                         this.alert = "Ocurrió un error con el inicio de sesión";
@@ -243,9 +235,6 @@ let LoginPage = class LoginPage {
                         a.dismiss().then(() => console.log('abort presenting'));
                         //  Mostrar mensaje de al usuario
                         this.genericAlert(this.alert, this.advice);
-                    }
-                    finally {
-                        a.dismiss().then(() => console.log('abort presenting'));
                     }
                 }));
             });

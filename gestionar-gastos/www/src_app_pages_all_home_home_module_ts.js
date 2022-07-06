@@ -90,19 +90,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "HomePage": () => (/* binding */ HomePage)
 /* harmony export */ });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! tslib */ 34929);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! tslib */ 34929);
 /* harmony import */ var _home_page_html_ngResource__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./home.page.html?ngResource */ 32500);
 /* harmony import */ var _home_page_scss_ngResource__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./home.page.scss?ngResource */ 60402);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/core */ 3184);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/router */ 52816);
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @ionic/angular */ 93819);
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs/operators */ 83910);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/router */ 52816);
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @ionic/angular */ 93819);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! rxjs/operators */ 83910);
 /* harmony import */ var chart_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! chart.js */ 10177);
 /* harmony import */ var src_app_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/authentication.service */ 7053);
 /* harmony import */ var src_app_services_user_user_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/user/user.service */ 9709);
 /* harmony import */ var src_app_services_gastos_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/services/gastos.service */ 40354);
 /* harmony import */ var _awesome_cordova_plugins_local_notifications_ngx__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @awesome-cordova-plugins/local-notifications/ngx */ 90449);
 /* harmony import */ var src_app_services_presupuestos_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/services/presupuestos.service */ 1931);
+/* harmony import */ var src_app_app_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/app.component */ 55041);
+
 
 
 
@@ -117,7 +119,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let HomePage = class HomePage {
-    constructor(menuCtrl, auth, router, loadingController, alertCtrl, userService, gastoService, localNotifications, presupuestoService, routerOutlet) {
+    constructor(menuCtrl, auth, router, loadingController, alertCtrl, userService, gastoService, localNotifications, presupuestoService, routerOutlet, appComp) {
         this.menuCtrl = menuCtrl;
         this.auth = auth;
         this.router = router;
@@ -128,6 +130,7 @@ let HomePage = class HomePage {
         this.localNotifications = localNotifications;
         this.presupuestoService = presupuestoService;
         this.routerOutlet = routerOutlet;
+        this.appComp = appComp;
         this.loaded = false;
         this.presp = 0.0; //Variable para el presupuesto total de la familia
         this.prespGst = 0.0; //Variable para el monto restante del presupuesto total de la familia
@@ -135,12 +138,12 @@ let HomePage = class HomePage {
         this.routerOutlet.swipeGesture = false;
     }
     ngOnInit() {
-        return (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
+        return (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
             // Control de la interacción del usuario usando una rueda de carga
             return yield this.loadingController.create({}).then(a => {
-                a.present().then(() => (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
+                a.present().then(() => (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
                     // Obtención del usuario que actualmente tiene la sesión abierta
-                    yield this.auth.getUserAuth().pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1)).subscribe((user) => (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
+                    yield this.auth.getUserAuth().pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.take)(1)).subscribe((user) => (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
                         // Control de errores
                         try {
                             this.sessionEmail = user.email;
@@ -148,8 +151,10 @@ let HomePage = class HomePage {
                             // Obtener los datos del usurio de FireStore dado- 
                             //    el email proporcionado por la API de autentificación
                             this.sessionUser = yield this.auth.getUsuario(this.sessionEmail);
-                            yield this.sessionUser.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1)).subscribe((res) => (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
+                            yield this.sessionUser.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.take)(1)).subscribe((res) => (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
                                 this.auth.sideMenu = res[0].role;
+                                this.appComp.email = res[0].email;
+                                this.appComp.name = res[0].displayName;
                                 // Verificar si el usuario está asignado a una familia
                                 if (res[0].id_familia === '-1') {
                                     this.router.navigate(["/login"]);
@@ -163,7 +168,7 @@ let HomePage = class HomePage {
                                 else {
                                     this.startMes = "Saludos, " + res[0].displayName + ". Comienza a ahorra contigo y tu familia.";
                                 }
-                                this.gastosHome.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1)).subscribe((gasto) => (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
+                                this.gastosHome.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.take)(1)).subscribe((gasto) => (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
                                     var sumatoria = 0.0;
                                     for (let index = 0; index < gasto.length; index++) {
                                         var aux = new Date(gasto[index].fecha);
@@ -197,8 +202,8 @@ let HomePage = class HomePage {
         });
     }
     entrada(a) {
-        return (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
-            this.sessionUser.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1)).subscribe((user) => (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
+        return (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
+            this.sessionUser.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.take)(1)).subscribe((user) => (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
                 yield this.gastoService.homeChartData(user[0].id_familia).then((res) => {
                     if (this.doughnutChart != null) { //En caso de que el grafico este inicializado
                         this.doughnutChart.destroy(); //Destruir la instancia
@@ -246,7 +251,7 @@ let HomePage = class HomePage {
         });
     }
     genericAlert(alert_message, advice) {
-        return (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
+        return (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
             const prompt = yield this.alertCtrl.create({
                 header: 'Lo sentimos',
                 subHeader: alert_message,
@@ -257,32 +262,33 @@ let HomePage = class HomePage {
         });
     }
     dismiss() {
-        return (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
+        return (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
             return yield this.loadingController.dismiss().then(() => console.log('dismissed'));
         });
     }
     cargarNotificaciones() {
-        return (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__awaiter)(this, void 0, void 0, function* () {
+        return (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__awaiter)(this, void 0, void 0, function* () {
         });
     }
 };
 HomePage.ctorParameters = () => [
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_10__.MenuController },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_11__.MenuController },
     { type: src_app_services_authentication_service__WEBPACK_IMPORTED_MODULE_3__.AuthenticationService },
-    { type: _angular_router__WEBPACK_IMPORTED_MODULE_11__.Router },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_10__.LoadingController },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_10__.AlertController },
+    { type: _angular_router__WEBPACK_IMPORTED_MODULE_12__.Router },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_11__.LoadingController },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_11__.AlertController },
     { type: src_app_services_user_user_service__WEBPACK_IMPORTED_MODULE_4__.UserService },
     { type: src_app_services_gastos_service__WEBPACK_IMPORTED_MODULE_5__.GastosService },
     { type: _awesome_cordova_plugins_local_notifications_ngx__WEBPACK_IMPORTED_MODULE_6__.LocalNotifications },
     { type: src_app_services_presupuestos_service__WEBPACK_IMPORTED_MODULE_7__.PresupuestosService },
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_10__.IonRouterOutlet }
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_11__.IonRouterOutlet },
+    { type: src_app_app_component__WEBPACK_IMPORTED_MODULE_8__.AppComponent }
 ];
 HomePage.propDecorators = {
-    doughnutCanvas: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_12__.ViewChild, args: ['doughnutCanvas',] }]
+    doughnutCanvas: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_13__.ViewChild, args: ['doughnutCanvas',] }]
 };
-HomePage = (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__decorate)([
-    (0,_angular_core__WEBPACK_IMPORTED_MODULE_12__.Component)({
+HomePage = (0,tslib__WEBPACK_IMPORTED_MODULE_9__.__decorate)([
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_13__.Component)({
         selector: 'app-home',
         template: _home_page_html_ngResource__WEBPACK_IMPORTED_MODULE_0__,
         styles: [_home_page_scss_ngResource__WEBPACK_IMPORTED_MODULE_1__]
@@ -364,6 +370,17 @@ let GastosService = class GastosService {
         };
         body.set('id_familia', id);
         return this.http.post(src_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.HOME_FUNC_PATH, body, httpOptions).toPromise();
+    }
+    categoryData(id) {
+        let body = new URLSearchParams();
+        const httpOptions = {
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__.HttpHeaders({
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Access-Control-Allow-Origin': "*"
+            })
+        };
+        body.set('id_familia', id);
+        return this.http.post(src_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.CATEGORY_FUNC_PATH, body, httpOptions).toPromise();
     }
 };
 GastosService.ctorParameters = () => [

@@ -326,6 +326,17 @@ let GastosService = class GastosService {
         body.set('id_familia', id);
         return this.http.post(src_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.HOME_FUNC_PATH, body, httpOptions).toPromise();
     }
+    categoryData(id) {
+        let body = new URLSearchParams();
+        const httpOptions = {
+            headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__.HttpHeaders({
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Access-Control-Allow-Origin': "*"
+            })
+        };
+        body.set('id_familia', id);
+        return this.http.post(src_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.CATEGORY_FUNC_PATH, body, httpOptions).toPromise();
+    }
 };
 GastosService.ctorParameters = () => [
     { type: _angular_fire_compat_firestore__WEBPACK_IMPORTED_MODULE_2__.AngularFirestore },
