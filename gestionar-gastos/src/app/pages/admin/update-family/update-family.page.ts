@@ -76,35 +76,39 @@ export class UpdateFamilyPage implements OnInit {
   }
 
   async update(email) {
-    
-    try {
+    return await this.loadingController.create({ }).then(a => {
+      a.present().then(async () => {
+        try {
       
-      this.fam.id = this.id
-      this.fam.nombre = this.nombre
-      this.fam.presupuesto_global = this.presupuesto_global
-      this.fam.primer_dia_mes = this.primer_dia_mes
-
-      //console.log(this.fam)
-
-      this.auth.updateFamily(this.fam)
-
-      this.header = 'Listo'
-      this.alert = ""
-      this.advice = 'Datos actualizados correctamente'
-      this.genericAlert(this.header, this.alert, this.advice)
-
-      return this.router.navigate(["/tabs"]);
-
-    } catch (error) {
-      console.log("error al asignar familia")
-
-      this.header = 'Lo sentimos'
-      this.alert = "Ocurrió un error inesperado al ingresar su familia"
-      this.advice = 'Por favor, inténtelo de nuevo'
-
-      return this.genericAlert(this.header, this.alert, this.advice)
-
-    }
+          this.fam.id = this.id
+          this.fam.nombre = this.nombre
+          this.fam.presupuesto_global = this.presupuesto_global
+          this.fam.primer_dia_mes = this.primer_dia_mes
+    
+          //console.log(this.fam)
+    
+          this.auth.updateFamily(this.fam)
+          a.dismiss().then(() => console.log('abort presenting'));
+    
+          this.header = 'Listo'
+          this.alert = ""
+          this.advice = 'Datos actualizados correctamente'
+          this.genericAlert(this.header, this.alert, this.advice)
+    
+          return this.router.navigate(["/tabs"]);
+    
+        } catch (error) {
+          console.log("error al asignar familia")
+    
+          this.header = 'Lo sentimos'
+          this.alert = "Ocurrió un error inesperado al ingresar su familia"
+          this.advice = 'Por favor, inténtelo de nuevo'
+    
+          return this.genericAlert(this.header, this.alert, this.advice)
+    
+        }
+      })
+    })
 
   }
 
