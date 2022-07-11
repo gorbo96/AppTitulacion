@@ -146,17 +146,28 @@ export const homeReq = functions.https.onRequest((request, response) => {
                   firsDay = doc.data().primer_dia_mes;
                 });
 
+                const now = new Date();
                 let auxDate1:any = (new Date((new Date().setDate(firsDay+1))))
                     .toISOString().substring(0, 10);
                 let auxDate2:any = new Date((new Date((new Date().setDate(0))))
                     .setDate(firsDay)).toISOString().substring(0, 10);
+                let auxDate3:any = new Date(new Date().setMonth(now.getMonth()+1
+                    , firsDay+1)).toISOString().substring(0, 10);
 
                 auxDate1 = (new Date(auxDate1)).getTime();
                 auxDate2 = (new Date(auxDate2)).getTime();
+                auxDate3 = (new Date(auxDate3)).getTime();
 
                 gastosMes = gastosMes.filter((data) =>{
                   const date = (new Date(data.fecha)).getTime();
-                  return (date<=auxDate1 && date>=auxDate2);
+
+                  if (now.getTime() < auxDate1) {
+                    return (date<=auxDate1 && date>=auxDate2);
+                  } else {
+                    auxDate1 = new Date(new Date(auxDate1).setDate(firsDay));
+                    auxDate1 = auxDate1.getTime();
+                    return (date>=auxDate1 && date<=auxDate3);
+                  }
                 });
 
                 gastosMes.forEach((element) => {
@@ -231,17 +242,28 @@ export const categoryReq = functions.https.onRequest((request, response) => {
                   firsDay = doc.data().primer_dia_mes;
                 });
 
+                const now = new Date();
                 let auxDate1:any = (new Date((new Date().setDate(firsDay+1))))
                     .toISOString().substring(0, 10);
                 let auxDate2:any = new Date((new Date((new Date().setDate(0))))
                     .setDate(firsDay)).toISOString().substring(0, 10);
+                let auxDate3:any = new Date(new Date().setMonth(now.getMonth()+1
+                    , firsDay+1)).toISOString().substring(0, 10);
 
                 auxDate1 = (new Date(auxDate1)).getTime();
                 auxDate2 = (new Date(auxDate2)).getTime();
+                auxDate3 = (new Date(auxDate3)).getTime();
 
                 gastosMes = gastosMes.filter((data) =>{
                   const date = (new Date(data.fecha)).getTime();
-                  return (date<=auxDate1 && date>=auxDate2);
+
+                  if (now.getTime() < auxDate1) {
+                    return (date<=auxDate1 && date>=auxDate2);
+                  } else {
+                    auxDate1 = new Date(new Date(auxDate1).setDate(firsDay));
+                    auxDate1 = auxDate1.getTime();
+                    return (date>=auxDate1 && date<=auxDate3);
+                  }
                 });
 
                 gastosMes.forEach((element) => {

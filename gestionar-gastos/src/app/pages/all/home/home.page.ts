@@ -113,7 +113,7 @@ export class HomePage implements OnInit {
                   
                 }
                 this.localNotifications.schedule({
-                  text: "Gastos del dia "+sumatoria,
+                  text: "Gastos del dia $"+sumatoria,
                   trigger: {at: new Date()},                 
                 });
 
@@ -152,6 +152,13 @@ export class HomePage implements OnInit {
         
         if(this.doughnutChart!=null){//En caso de que el grafico este inicializado
           this.doughnutChart.destroy()//Destruir la instancia
+        }
+
+        if(res.gastoTot > res.presp){
+          this.localNotifications.schedule({
+            text: "Se ha excedido el presupuesto global con $"+(res.gastoTot-res.presp),
+            trigger: {at: new Date()},                 
+          });
         }
 
         this.doughnutChart = new Chart(this.doughnutCanvas.nativeElement, {//Declaracion de la grafica 
