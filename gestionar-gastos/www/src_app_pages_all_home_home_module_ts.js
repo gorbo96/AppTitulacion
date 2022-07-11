@@ -178,7 +178,7 @@ let HomePage = class HomePage {
                                         }
                                     }
                                     this.localNotifications.schedule({
-                                        text: "Gastos del dia " + sumatoria,
+                                        text: "Gastos del dia $" + sumatoria,
                                         trigger: { at: new Date() },
                                     });
                                     this.entrada(a);
@@ -207,6 +207,12 @@ let HomePage = class HomePage {
                 yield this.gastoService.homeChartData(user[0].id_familia).then((res) => {
                     if (this.doughnutChart != null) { //En caso de que el grafico este inicializado
                         this.doughnutChart.destroy(); //Destruir la instancia
+                    }
+                    if (res.gastoTot > res.presp) {
+                        this.localNotifications.schedule({
+                            text: "Se ha excedido el presupuesto global con $" + (res.gastoTot - res.presp),
+                            trigger: { at: new Date() },
+                        });
                     }
                     this.doughnutChart = new chart_js__WEBPACK_IMPORTED_MODULE_2__.Chart(this.doughnutCanvas.nativeElement, {
                         type: 'polarArea',

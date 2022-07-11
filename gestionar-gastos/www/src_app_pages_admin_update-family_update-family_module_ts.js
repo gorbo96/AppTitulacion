@@ -150,26 +150,31 @@ let UpdateFamilyPage = class UpdateFamilyPage {
     }
     update(email) {
         return (0,tslib__WEBPACK_IMPORTED_MODULE_4__.__awaiter)(this, void 0, void 0, function* () {
-            try {
-                this.fam.id = this.id;
-                this.fam.nombre = this.nombre;
-                this.fam.presupuesto_global = this.presupuesto_global;
-                this.fam.primer_dia_mes = this.primer_dia_mes;
-                //console.log(this.fam)
-                this.auth.updateFamily(this.fam);
-                this.header = 'Listo';
-                this.alert = "";
-                this.advice = 'Datos actualizados correctamente';
-                this.genericAlert(this.header, this.alert, this.advice);
-                return this.router.navigate(["/tabs"]);
-            }
-            catch (error) {
-                console.log("error al asignar familia");
-                this.header = 'Lo sentimos';
-                this.alert = "Ocurrió un error inesperado al ingresar su familia";
-                this.advice = 'Por favor, inténtelo de nuevo';
-                return this.genericAlert(this.header, this.alert, this.advice);
-            }
+            return yield this.loadingController.create({}).then(a => {
+                a.present().then(() => (0,tslib__WEBPACK_IMPORTED_MODULE_4__.__awaiter)(this, void 0, void 0, function* () {
+                    try {
+                        this.fam.id = this.id;
+                        this.fam.nombre = this.nombre;
+                        this.fam.presupuesto_global = this.presupuesto_global;
+                        this.fam.primer_dia_mes = this.primer_dia_mes;
+                        //console.log(this.fam)
+                        this.auth.updateFamily(this.fam);
+                        a.dismiss().then(() => console.log('abort presenting'));
+                        this.header = 'Listo';
+                        this.alert = "";
+                        this.advice = 'Datos actualizados correctamente';
+                        this.genericAlert(this.header, this.alert, this.advice);
+                        return this.router.navigate(["/tabs"]);
+                    }
+                    catch (error) {
+                        console.log("error al asignar familia");
+                        this.header = 'Lo sentimos';
+                        this.alert = "Ocurrió un error inesperado al ingresar su familia";
+                        this.advice = 'Por favor, inténtelo de nuevo';
+                        return this.genericAlert(this.header, this.alert, this.advice);
+                    }
+                }));
+            });
         });
     }
     regresar() {
@@ -222,7 +227,7 @@ module.exports = "ion-content.background {\n  --background: url('login.jpg') 0 0
   \******************************************************************************/
 /***/ ((module) => {
 
-module.exports = "<ion-header>\r\n</ion-header>\r\n\r\n<ion-content class=\"background\" >\r\n\r\n  <ion-grid  style=\" margin-top: 70%;\">\r\n    \r\n      <ion-label>Nombre de la familia</ion-label>\r\n    <ion-input id=\"input\" [(ngModel)]=\"nombre\" placeholder=\"Familia Ejemplo\" ></ion-input>\r\n\r\n      <ion-label>Presupuesto global</ion-label>\r\n      <ion-input  [(ngModel)]=\"presupuesto_global\" id = \"input\" type = \"number\" placeholder= \"0.00\" ></ion-input>\r\n\r\n      <ion-item>\r\n        <ion-label>Primer día del mes</ion-label>\r\n        <ion-select [(ngModel)]=\"primer_dia_mes\"  color=\"sunny\">\r\n          <ion-select-option [value]=\"1\">1</ion-select-option>\r\n          <ion-select-option [value]=\"2\">2</ion-select-option>\r\n          <ion-select-option [value]=\"3\">3</ion-select-option>\r\n          <ion-select-option [value]=\"4\">4</ion-select-option>\r\n          <ion-select-option [value]=\"5\">5</ion-select-option>\r\n          <ion-select-option [value]=\"6\">6</ion-select-option>\r\n          <ion-select-option [value]=\"7\">7</ion-select-option>\r\n          <ion-select-option [value]=\"8\">8</ion-select-option>\r\n          <ion-select-option [value]=\"9\">9</ion-select-option>\r\n          <ion-select-option [value]=\"10\">10</ion-select-option>\r\n          <ion-select-option [value]=\"11\">11</ion-select-option>\r\n          <ion-select-option [value]=\"12\">12</ion-select-option>\r\n          <ion-select-option [value]=\"13\">13</ion-select-option>\r\n          <ion-select-option [value]=\"14\">14</ion-select-option>\r\n          <ion-select-option [value]=\"15\">15</ion-select-option>\r\n        </ion-select>\r\n      </ion-item>\r\n\r\n  </ion-grid>\r\n\r\n  <ion-button id=\"botonIniciar\" style=\" margin-bottom: 7%;\" color=\"success\"  (click)=\"update()\" > Actualizar datos </ion-button>\r\n  \r\n  \r\n  <!--<ion-fab-button ><ion-icon name=\"log-out\" (click)=\" logout()\" ></ion-icon></ion-fab-button>-->\r\n \r\n  \r\n\r\n</ion-content>\r\n\r\n";
+module.exports = "<ion-header>\r\n</ion-header>\r\n\r\n<ion-content class=\"background\" >\r\n\r\n  <ion-grid  style=\" margin-top: 70%;\">\r\n    \r\n      <ion-label>Nombre de la familia</ion-label>\r\n    <ion-input id=\"input\" [(ngModel)]=\"nombre\" placeholder=\"Familia Ejemplo\" ></ion-input>\r\n\r\n      <ion-label>Presupuesto global</ion-label>\r\n      <ion-input disabled=\"true\" [(ngModel)]=\"presupuesto_global\" id = \"input\" type = \"number\" placeholder= \"0.00\" ></ion-input>\r\n\r\n      <ion-item>\r\n        <ion-label>Primer día del mes</ion-label>\r\n        <ion-select [(ngModel)]=\"primer_dia_mes\"  color=\"sunny\">\r\n          <ion-select-option [value]=\"1\">1</ion-select-option>\r\n          <ion-select-option [value]=\"2\">2</ion-select-option>\r\n          <ion-select-option [value]=\"3\">3</ion-select-option>\r\n          <ion-select-option [value]=\"4\">4</ion-select-option>\r\n          <ion-select-option [value]=\"5\">5</ion-select-option>\r\n          <ion-select-option [value]=\"6\">6</ion-select-option>\r\n          <ion-select-option [value]=\"7\">7</ion-select-option>\r\n          <ion-select-option [value]=\"8\">8</ion-select-option>\r\n          <ion-select-option [value]=\"9\">9</ion-select-option>\r\n          <ion-select-option [value]=\"10\">10</ion-select-option>\r\n          <ion-select-option [value]=\"11\">11</ion-select-option>\r\n          <ion-select-option [value]=\"12\">12</ion-select-option>\r\n          <ion-select-option [value]=\"13\">13</ion-select-option>\r\n          <ion-select-option [value]=\"14\">14</ion-select-option>\r\n          <ion-select-option [value]=\"15\">15</ion-select-option>\r\n        </ion-select>\r\n      </ion-item>\r\n\r\n  </ion-grid>\r\n\r\n  <ion-button id=\"botonIniciar\" style=\" margin-bottom: 7%;\" color=\"success\"  (click)=\"update()\" > Actualizar datos </ion-button>\r\n  \r\n  \r\n  <!--<ion-fab-button ><ion-icon name=\"log-out\" (click)=\" logout()\" ></ion-icon></ion-fab-button>-->\r\n \r\n  \r\n\r\n</ion-content>\r\n\r\n";
 
 /***/ })
 

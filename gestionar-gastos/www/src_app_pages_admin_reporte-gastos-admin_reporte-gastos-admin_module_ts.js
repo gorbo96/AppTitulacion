@@ -262,7 +262,7 @@ let ReporteGastosAdminPage = class ReporteGastosAdminPage {
             this.saludChart.destroy();
         }
         var aux = 0.0;
-        if (this.resReqCategory.gastoSalud >= this.resReqCategory.presupuestoSalud) {
+        if (this.resReqCategory.gastoSalud >= this.presupuestoSalud) {
             aux = 0;
         }
         else {
@@ -304,7 +304,7 @@ let ReporteGastosAdminPage = class ReporteGastosAdminPage {
             this.viviendaChart.destroy();
         }
         var aux = 0.0;
-        if (this.resReqCategory.gastoVivienda >= this.resReqCategory.presupuestoVivienda) {
+        if (this.resReqCategory.gastoVivienda >= this.presupuestoVivienda) {
             aux = 0.0;
         }
         else {
