@@ -70,7 +70,11 @@ export class CreatefamilyPage implements OnInit {
                   this.auth.changeFamily(res2[0], res[0])
                   this.auth.modifyRole(res2[0], 'A')
 
-                  a.dismiss().then(() => console.log('abort presenting'));
+                  setTimeout(async () => {
+                    a.dismiss().then(() => console.log('abort presenting'));
+                    return this.router.navigate(["/home"]);
+                  }, 2000);                  
+                  
                 }) 
         
               }) 
@@ -86,10 +90,6 @@ export class CreatefamilyPage implements OnInit {
             } finally {
               a.dismiss().then(() => console.log('abort presenting'));
             }
-            
-            setTimeout(async () => {
-              return this.router.navigate(["/home"]);
-            }, 2000);
             
           })
     
@@ -134,9 +134,7 @@ export class CreatefamilyPage implements OnInit {
               a.present().then(async () => { 
         
                 console.log('Accept '+data.email)
-                await this.join(data.email)
-
-                a.dismiss().then(() => console.log('abort presenting'));
+                await this.join(data.email, a)
         
               }) 
             })
@@ -154,7 +152,7 @@ export class CreatefamilyPage implements OnInit {
     return await this.loadingController.dismiss().then(() => console.log('dismissed'));
   }
 
-  async join(email) {
+  async join(email, a) {
 
  
     
@@ -180,17 +178,20 @@ export class CreatefamilyPage implements OnInit {
             await this.aux.pipe(take(1)).subscribe( res2=> {
               this.auth.changeFamily(res2[0],  this.fam)
               this.auth.modifyRole(res2[0], 'U')
+
+              setTimeout(async () => {
+                a.dismiss().then(() => console.log('abort presenting'));
+                return this.router.navigate(["/home"]);
+              }, 2000);
               
             })
 
-            return this.router.navigate(["/home"]);
+            
           })
 
         }
 
       })
-
-      return this.router.navigate(["/home"]);
 
     } catch (error) {
       console.log("error al asignar familia")
