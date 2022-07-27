@@ -25,9 +25,13 @@ export class HomePage implements OnInit {
   //Variables para almacenamiento de respuestas desde Firebase de consultas de cada coleccion
   gastosHome:any
   gastosMes:any
+  gastosDia:any = []
   usuario:any
   familia:any
   usuarios:any
+  sumatoria:number
+  categories: any
+  flagGatos: boolean = false
 
   //Variables para una notificacion especifica
   alert: string
@@ -86,7 +90,7 @@ export class HomePage implements OnInit {
               if(res[0].id_familia === '-1'){
                 this.router.navigate(["/login"])
               }
-
+              
               //  Todos los gastos familiares serán mostrados                
               this.gastosHome = this.gastoService.obtenerGastosFamilia(res[0].id_familia)
 
@@ -101,24 +105,42 @@ export class HomePage implements OnInit {
               } 
               
               this.gastosHome.pipe(take(1)).subscribe(async gasto =>{                  
-                var sumatoria=0.0
+                this.sumatoria=0
                 for (let index = 0; index < gasto.length; index++) {
                   var aux=new Date(gasto[index].fecha)
                   var actual=new Date()
                   
                   if(aux.getDate()==actual.getDate()){
-                    sumatoria+=gasto[index].monto
+                    this.sumatoria+=gasto[index].monto
+                  }
+
+                  if(aux.getDate()==actual.getDate() && gasto[index].id_usuario === res[0].uid){
+                    this.flagGatos = true
+                    this.gastosDia.push(gasto[index])
                   }
                   
-                  
                 }
+
                 this.localNotifications.schedule({
-                  text: "Gastos del dia $"+sumatoria,
+                  text: "Gastos del dia $"+this.sumatoria,
                   trigger: {at: new Date()},                 
                 });
 
                 this.entrada(a)
               })
+
+              //  Obtener las categorías
+              await this.gastoService.getCategories().pipe(take(1)).subscribe(cat => {
+                this.categories = cat;
+              },
+              err => {
+                console.log('HTTP Error', err);
+                this.alert = "Ocurrió un error al cargar sus datos"
+                this.advice = 'Por favor, inténtelo de nuevo'
+                
+                this.genericAlert(this.alert, this.advice)
+              },
+              () => console.log('HTTP request stream done'));
   
             })
                
@@ -143,6 +165,11 @@ export class HomePage implements OnInit {
 
   
   } 
+
+  getCategory(id){
+    var cat = this.categories.filter((data) => data.id === id);
+    return cat[0].name
+  }
 
   async entrada(a){
 

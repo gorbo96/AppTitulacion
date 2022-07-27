@@ -86,8 +86,11 @@ export class CreatefamilyPage implements OnInit {
             } finally {
               a.dismiss().then(() => console.log('abort presenting'));
             }
-      
-            return this.router.navigate(["/home"]);
+            
+            setTimeout(async () => {
+              return this.router.navigate(["/home"]);
+            }, 2000);
+            
           })
     
         }else{
