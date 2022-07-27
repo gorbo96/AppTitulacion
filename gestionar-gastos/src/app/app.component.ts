@@ -46,16 +46,12 @@ export class AppComponent implements OnInit {
         this.sessionUser = await this.auth.getUsuario(this.email)
   
         await this.sessionUser.pipe(take(1)).subscribe(res=> {
-          console.log('HERE '+res[0].email)
           this.name = res[0].displayName
           this.auth.sideMenu = res[0].role          
 
-          //this.auth.sideMenu = true
-
-        }) 
+        });
       } catch (error) {
         console.log('SIDEMENU: '+error);
-        //this.auth.sideMenu = false
 
       }
 

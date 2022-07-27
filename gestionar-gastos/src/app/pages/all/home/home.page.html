@@ -1,6 +1,7 @@
 <ion-header>
-  <ion-toolbar>    
+  <ion-toolbar> 
     <ion-title>Inicio</ion-title>
+    <ion-menu-button slot="start" color="secondary" auto-hide="false"></ion-menu-button>
   </ion-toolbar>
 </ion-header>
 
@@ -22,5 +23,35 @@
     </ion-card-content>
   
   </div>
+
+  <div *ngIf="loaded" class="ion-padding">
+    
+    <ion-card-header>
+      <ion-card-title *ngIf="loaded">Sus gastos del día</ion-card-title>     
+    </ion-card-header>
+
+    <div *ngIf="flagGatos">
+      <div *ngFor="let gasto of gastosDia"><!--Bucle con codigo angular para visualizar gastos-->
+        <ion-item><!--Item de lista-->        
+          <ion-label><!--Etiqueta compuesta-->  
+            <div> 
+              <!--Visualizacion de informacion acerca del gasto-->               
+              <h2>{{ getCategory(gasto.id_categoria) }} - $ {{ gasto.monto }}</h2>
+              <p>{{ gasto.descripcion }}</p>
+              <p>{{ gasto.fecha }}</p>
+            </div>            
+          </ion-label>
+        </ion-item>      
+      </div>
+    </div>  
+
+    <ion-card-content>
+      <div *ngIf="!flagGatos">
+        <p style="color:#696969; font-style: italic;">No se han registrado gastos hoy...</p>
+      </div>       
+    </ion-card-content>
+
+  </div>
+
 </ion-content>
 
