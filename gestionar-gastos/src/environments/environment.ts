@@ -17,6 +17,7 @@ export const environment = {
   RG_FUNC_PATH: "https://us-central1-gestionar-gastos.cloudfunctions.net/regressionReq",
   HOME_FUNC_PATH: "https://us-central1-gestionar-gastos.cloudfunctions.net/homeReq",
   CATEGORY_FUNC_PATH: "https://us-central1-gestionar-gastos.cloudfunctions.net/categoryReq",
+  DEFAULT_PROFILE_PIC: "https://firebasestorage.googleapis.com/v0/b/gestionar-gastos.appspot.com/o/default.png?alt=media&token=b898be5d-bf8c-4fc6-abaf-94c8a6f802db",
   googleWebClientId : "519785918958-jfm7103u07hu0sfoprgku3jvp7kk7ire.apps.googleusercontent.com"
 
 };
