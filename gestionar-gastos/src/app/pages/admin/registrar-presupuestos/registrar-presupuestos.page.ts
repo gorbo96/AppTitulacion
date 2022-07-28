@@ -93,6 +93,7 @@ export class RegistrarPresupuestosPage implements OnInit {
     })
     
   }
+
   async genericAlert(alert_message, advice){//Funcion para creacion de alerta
 
     const prompt = await this.alertCtrl.create({//Llamado a creacion con el mensaje antes definido 
@@ -108,17 +109,40 @@ export class RegistrarPresupuestosPage implements OnInit {
 
   }
 
+  async registroAlert(alert_message, advice){//Funcion para creacion de alerta
+
+    const prompt = await this.alertCtrl.create({//Llamado a creacion con el mensaje antes definido 
+      //Mensaje
+      header: '¡Listo!',  
+      subHeader: alert_message,
+      message: advice,  
+      
+      buttons: ['Aceptar']//Boton de confirmacion  
+    }); 
+
+    await prompt.present()
+
+  }
+
   sumaPresupuesto(){
 
     try {
-      this.sumPresupuestoIng=   this.presupuestoAlimentacion.cantidad
-                            + this.presupuestoServicios.cantidad
-                            + this.presupuestoEducacion.cantidad
-                            + this.presupuestoOcio.cantidad
-                            + this.presupuestoTransporte.cantidad
-                            + this.presupuestoVivienda.cantidad
-                            + this.presupuestoSalud.cantidad
-                            + this.presupuestoOtros.cantidad;
+      this.sumPresupuestoIng = 0
+
+      var arrayAux = [this.presupuestoAlimentacion.cantidad,
+                      this.presupuestoServicios.cantidad,
+                      this.presupuestoEducacion.cantidad,
+                      this.presupuestoOcio.cantidad,
+                      this.presupuestoTransporte.cantidad,
+                      this.presupuestoVivienda.cantidad,
+                      this.presupuestoSalud.cantidad,
+                      this.presupuestoOtros.cantidad]
+
+      arrayAux.forEach((pre) => {
+        if(pre != null){
+          this.sumPresupuestoIng += pre
+        }
+      });
     
       if(this.sumPresupuestoIng > this.presupuestoTotal){
         this.labelColor="danger"
@@ -177,13 +201,16 @@ export class RegistrarPresupuestosPage implements OnInit {
               this.presupuestoOtros.id_familia=user[0].id_familia
               this.presupuestoSalud.id_familia=user[0].id_familia
 
-              this.presupuestoServicios.fecha=(new Date).toISOString()
-              this.presupuestoEducacion.fecha=(new Date).toISOString()
-              this.presupuestoVivienda.fecha=(new Date).toISOString()
-              this.presupuestoTransporte.fecha=(new Date).toISOString()
-              this.presupuestoOcio.fecha=(new Date).toISOString()
-              this.presupuestoOtros.fecha=(new Date).toISOString()
-              this.presupuestoSalud.fecha=(new Date).toISOString()
+              var currentDate = (new Date).toISOString()
+
+              this.presupuestoAlimentacion.fecha=currentDate
+              this.presupuestoServicios.fecha=currentDate
+              this.presupuestoEducacion.fecha=currentDate
+              this.presupuestoVivienda.fecha=currentDate
+              this.presupuestoTransporte.fecha=currentDate
+              this.presupuestoOcio.fecha=currentDate
+              this.presupuestoOtros.fecha=currentDate
+              this.presupuestoSalud.fecha=currentDate
               
               //Valores de categoria registrados en Firebase
               this.presupuestoAlimentacion.id_categoria="834IqsQWzMFPdsE7TZKu"
@@ -209,6 +236,11 @@ export class RegistrarPresupuestosPage implements OnInit {
               this.presupuestoService.guardar(this.presupuestoTransporte)
               this.presupuestoService.guardar(this.presupuestoVivienda)
               this.actualizarFamilia()//Llamada a funcion diseñada
+
+              this.alert = "Presupuestos ingresados"
+              this.advice = 'Ahora puede usar la opcion de reportes'        
+              return this.registroAlert(this.alert, this.advice)
+
             })            
           } catch(error){
             //Caso de encontrar un error, definir mesaje para alerta y lanzar alerta
@@ -227,25 +259,41 @@ export class RegistrarPresupuestosPage implements OnInit {
   async actualizarPresupuestos(){//Funcion para actualizar estado de presupuestos anteriores
     return await this.loadingController.create({ }).then(a => {
       a.present().then(async () => {
-        this.presupuestoServicios.fecha=(new Date).toISOString()
-        this.presupuestoEducacion.fecha=(new Date).toISOString()
-        this.presupuestoVivienda.fecha=(new Date).toISOString()
-        this.presupuestoTransporte.fecha=(new Date).toISOString()
-        this.presupuestoOcio.fecha=(new Date).toISOString()
-        this.presupuestoOtros.fecha=(new Date).toISOString()
-        this.presupuestoSalud.fecha=(new Date).toISOString()
+        try {
 
-        //En caso de cumplir clausula, guardar los diferentes presupuestos
-        this.presupuestoService.actualizarPresupuesto(this.presupuestoAlimentacion)
-        this.presupuestoService.actualizarPresupuesto(this.presupuestoEducacion)
-        this.presupuestoService.actualizarPresupuesto(this.presupuestoOcio)
-        this.presupuestoService.actualizarPresupuesto(this.presupuestoOtros)
-        this.presupuestoService.actualizarPresupuesto(this.presupuestoSalud)
-        this.presupuestoService.actualizarPresupuesto(this.presupuestoServicios)
-        this.presupuestoService.actualizarPresupuesto(this.presupuestoTransporte)
-        this.presupuestoService.actualizarPresupuesto(this.presupuestoVivienda)
-        this.actualizarFamilia()//Llamada a funcion diseñada
-        a.dismiss().then(() => console.log('abort presenting'))//Mensaje para registro de finalizacion de proceso
+          var currentDate = (new Date).toISOString()
+
+          this.presupuestoAlimentacion.fecha=currentDate
+          this.presupuestoServicios.fecha=currentDate
+          this.presupuestoEducacion.fecha=currentDate
+          this.presupuestoVivienda.fecha=currentDate
+          this.presupuestoTransporte.fecha=currentDate
+          this.presupuestoOcio.fecha=currentDate
+          this.presupuestoOtros.fecha=currentDate
+          this.presupuestoSalud.fecha=currentDate
+
+          //En caso de cumplir clausula, guardar los diferentes presupuestos
+          this.presupuestoService.actualizarPresupuesto(this.presupuestoAlimentacion)
+          this.presupuestoService.actualizarPresupuesto(this.presupuestoEducacion)
+          this.presupuestoService.actualizarPresupuesto(this.presupuestoOcio)
+          this.presupuestoService.actualizarPresupuesto(this.presupuestoOtros)
+          this.presupuestoService.actualizarPresupuesto(this.presupuestoSalud)
+          this.presupuestoService.actualizarPresupuesto(this.presupuestoServicios)
+          this.presupuestoService.actualizarPresupuesto(this.presupuestoTransporte)
+          this.presupuestoService.actualizarPresupuesto(this.presupuestoVivienda)
+          this.actualizarFamilia()//Llamada a funcion diseñada
+          
+          this.alert = "Presupuestos actualizados"
+          this.advice = 'Continue gestionando sus gastos'        
+          return this.registroAlert(this.alert, this.advice)       
+        } catch (error) {
+          console.log(error)  
+          this.alert = "Ocurrió un error inesperado al registrar el presupuesto"
+          this.advice = 'Por favor, inténtelo de nuevo'        
+          return this.genericAlert(this.alert, this.advice)
+        } finally {
+          a.dismiss().then(() => console.log('abort presenting'))//Mensaje para registro de finalizacion de proceso
+        }
 
       })
     })

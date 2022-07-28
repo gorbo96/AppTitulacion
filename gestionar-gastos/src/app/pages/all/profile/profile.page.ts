@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { finalize, take, tap } from 'rxjs/operators';
 import {AngularFireStorage,AngularFireUploadTask} from '@angular/fire/compat/storage';
 import {AngularFirestore,AngularFirestoreCollection} from '@angular/fire/compat/firestore';
@@ -175,16 +176,19 @@ export class ProfilePage implements OnInit{
               await this.aux.pipe(take(1)).subscribe(async res=>{
 
                 try {
-                  if(resp !== 'https://firebasestorage.googleapis.com/v0/b/gestionar-gastos.appspot.com/o/default.png?alt=media&token=e8ff50d0-3177-4b40-acf6-d29127a6baf3'){
+                  if(this.photo !== environment.DEFAULT_PROFILE_PIC){
                     await this.userService.deletePreviousPhoto(res[0].photoURL)
                   }
                 } catch (error) {
                   console.log('ERROR: Google photo URL ')
+                  this.alert = "Ocurrió un error al subir la imagen"
+                  this.advice = 'Por favor, inténtelo de nuevo'
+
+                  this.genericAlert(this.alert, this.advice)
                 }
 
                 await this.userService.savePhotoURL(res[0].uid, resp)
-
-                window.location.reload();
+                this.photo = resp
               })
             })
             console.log(resp)

@@ -495,7 +495,8 @@ export class ReporteGastosAdminPage implements AfterViewInit {
   graficaEstrella(){//Iniciacion grafica 'Radar' para comparacion de los diferentes presupuestos
     if(this.estrellaChart!=null){
       this.estrellaChart.destroy()
-    }    
+    }  
+    
     this.estrellaChart = new Chart(this.estrellaCanvas.nativeElement, {
       type: 'radar',//Tipo
       data: {

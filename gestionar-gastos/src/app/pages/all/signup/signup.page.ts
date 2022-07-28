@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, MenuController } from '@ionic/angular';
 import { throws } from 'assert';
+import { environment } from 'src/environments/environment';
 import { User } from 'src/app/domain/user';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
@@ -56,7 +57,7 @@ export class SignupPage implements OnInit {
             this.User.description = 'Hola, estoy manejando mis finanzas'
             this.User.active = true
             this.User.id_familia = "-1"
-            this.User.photoURL = 'https://firebasestorage.googleapis.com/v0/b/gestionar-gastos.appspot.com/o/default.png?alt=media&token=e8ff50d0-3177-4b40-acf6-d29127a6baf3'
+            this.User.photoURL = environment.DEFAULT_PROFILE_PIC
             this.User.createdAt = new Date()
             this.User.lastLogin = new Date()
             this.User.provider = 'gestion-gastos'
